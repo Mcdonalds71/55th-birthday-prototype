@@ -1,0 +1,121 @@
+.books-section {
+  padding: 8rem 1rem;
+  background-color: var(--bg-color);
+  overflow: hidden;
+}
+
+.section-title {
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  color: var(--text-primary);
+  letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+}
+
+.title-underline {
+  width: 60px;
+  height: 2px;
+  background-color: var(--accent-red);
+  margin: 0 auto 4rem auto;
+}
+
+.books-showcase {
+  display: flex;
+  flex-direction: column;
+  gap: 6rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.book-showcase-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.book-image-container {
+  perspective: 1000px;
+  width: 100%;
+  max-width: 350px;
+}
+
+.book-cover-img {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.6s ease;
+  transform-style: preserve-3d;
+}
+
+.book-image-container:hover .book-cover-img {
+  transform: translateY(-20px) rotateY(-15deg) rotateX(5deg);
+  box-shadow: 20px 40px 60px rgba(0,0,0,0.25);
+}
+
+.book-details {
+  text-align: center;
+  max-width: 400px;
+}
+
+.book-title {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.book-desc {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+.desktop-only { display: none; }
+.mobile-only { display: block; }
+.text-right { text-align: right; }
+
+/* Scroll Animations */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.animate-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.delay-100 { transition-delay: 0.1s; }
+.delay-300 { transition-delay: 0.3s; }
+
+@media (min-width: 768px) {
+  .books-showcase {
+    gap: 8rem;
+  }
+  
+  .book-showcase-item {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 4rem;
+  }
+
+  .desktop-only { display: block; }
+  .mobile-only { display: none; }
+  
+  .book-details {
+    text-align: left;
+    flex: 1;
+  }
+
+  .book-image-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+  }
+}
