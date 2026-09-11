@@ -46,19 +46,32 @@ export default function TicketingModal({ isOpen, onClose }) {
     submitData.append("email", formData.email);
     submitData.append("phone", formData.phone);
     submitData.append("receipt", receiptFile);
-    // Add destination email just in case you want to route it via Make later or inform the user
     submitData.append("_replyto", formData.email);
 
     try {
-      const response = await fetch("https://formspree.io/f/mbgjbbwz", {
+      // 1. Send to Formspree (for the client's dashboard)
+      const formspreePromise = fetch("https://formspree.io/f/mbgjbbwz", {
         method: "POST",
         body: submitData,
-        headers: {
-          'Accept': 'application/json'
-        }
+        headers: { 'Accept': 'application/json' }
       });
 
-      if (response.ok) {
+      // 2. Send to Make.com Webhook (for automation: QR code and email)
+      const makeData = new FormData();
+      makeData.append("name", formData.name);
+      makeData.append("email", formData.email);
+      makeData.append("phone", formData.phone);
+      // We don't necessarily need to send the file to Make, but we can send the data
+      
+      const makePromise = fetch("https://hook.us1.make.com/pnnq3jumlbm9o3u8s1vqwpj6f4x9wcwt", {
+        method: "POST",
+        body: makeData
+      });
+
+      // Wait for both to finish
+      const [formspreeRes, makeRes] = await Promise.all([formspreePromise, makePromise]);
+
+      if (formspreeRes.ok) {
         setStep(4);
       } else {
         alert("There was an error submitting your RSVP. Please try again.");
