@@ -49,39 +49,48 @@ export default function TicketingModal({ isOpen, onClose }) {
     submitData.append("_replyto", formData.email);
 
     try {
-      // 1. Send to Formspree (Primary goal)
-      const formspreeRes = await fetch("https://formspree.io/f/mbgjbbwz", {
+      // Formspree Free Tier DOES NOT support file uploads.
+      // So we send only the text data to Formspree.
+      const formspreeData = new FormData();
+      formspreeData.append("name", formData.name);
+      formspreeData.append("email", formData.email);
+      formspreeData.append("phone", formData.phone);
+      formspreeData.append("_replyto", formData.email);
+      formspreeData.append("receipt_note", "Receipt was uploaded and sent to Make.com");
+
+      // 1. Send to Formspree
+      const formspreePromise = fetch("https://formspree.io/f/mbgjbbwz", {
         method: "POST",
-        body: submitData,
+        body: formspreeData,
         headers: { 'Accept': 'application/json' }
       });
 
+      // 2. Send the ACTUAL file and data to Make.com
+      const makeData = new FormData();
+      makeData.append("name", formData.name);
+      makeData.append("email", formData.email);
+      makeData.append("phone", formData.phone);
+      makeData.append("receipt", receiptFile);
+
+      const makePromise = fetch("https://hook.us1.make.com/pnnq3jumlbm9o3u8s1vqwpj6f4x9wcwt", {
+        method: "POST",
+        body: makeData
+      });
+
+      // Execute both
+      const [formspreeRes, makeRes] = await Promise.all([formspreePromise, makePromise]);
+
       if (!formspreeRes.ok) {
-        alert("Formspree error: There was an issue submitting your RSVP.");
+        alert("Formspree error: Make sure your Formspree email is verified in your inbox.");
         setIsSubmitting(false);
         return;
       }
 
-      // If Formspree succeeds, immediately show success screen to user
+      // Success
       setStep(4);
 
-      // 2. Silently send to Make.com in the background for the automation
-      // We use URLSearchParams to prevent strict CORS preflight blocking by browsers/ad-blockers
-      const makeDataParams = new URLSearchParams();
-      makeDataParams.append("name", formData.name);
-      makeDataParams.append("email", formData.email);
-      makeDataParams.append("phone", formData.phone);
-
-      fetch("https://hook.us1.make.com/pnnq3jumlbm9o3u8s1vqwpj6f4x9wcwt", {
-        method: "POST",
-        body: makeDataParams,
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        }
-      }).catch(err => console.log("Make webhook silent failure (likely Ad-Blocker): ", err));
-
     } catch (error) {
-      alert("Network error. Please disable your Ad-Blocker or check your internet connection.");
+      alert("Network error. Please check your internet connection.");
     } finally {
       setIsSubmitting(false);
     }
