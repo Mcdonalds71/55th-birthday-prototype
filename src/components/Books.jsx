@@ -1,59 +1,86 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Document, Page, pdfjs } from 'react-pdf';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import './Books.css';
 
+// Set up PDF worker
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
+
+const BOOKS = [
+  {
+    title: "Tendencies",
+    pdfFile: "/tendencies.pdf",
+    description: "We all have things we're inclined to do out of love & they have their results. Explore the deep inclinations of the human spirit."
+  },
+  {
+    title: "Before You Japa",
+    pdfFile: "/before-you-japa.pdf",
+    description: "A crucial guide for anyone considering relocation. What you must know before you take the leap."
+  }
+];
+
 export default function Books() {
-  const sectionRef = useRef(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
+  // Auto slideshow effect
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    const elements = sectionRef.current.querySelectorAll('.animate-on-scroll');
-    elements.forEach((el) => observer.observe(el));
-
-    return () => elements.forEach((el) => observer.unobserve(el));
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % BOOKS.length);
+    }, 5000);
+    return () => clearInterval(timer);
   }, []);
 
+  const nextSlide = () => setCurrentIndex((prev) => (prev + 1) % BOOKS.length);
+  const prevSlide = () => setCurrentIndex((prev) => (prev - 1 + BOOKS.length) % BOOKS.length);
+
   return (
-    <section className="books-section" ref={sectionRef}>
+    <section id="books" className="books-section">
       <div className="container">
-        <div className="section-header text-center animate-on-scroll">
-          <h2 className="section-title">THE RELEASES</h2>
-          <div className="title-underline"></div>
+        <div className="text-center mb-4">
+          <span className="section-tag animate-fade-up">DOUBLE LAUNCH</span>
+          <h2 className="animate-fade-up">The New Books</h2>
+          <div className="title-divider animate-fade-up"></div>
         </div>
-        
-        <div className="books-showcase">
-          <div className="book-showcase-item animate-on-scroll delay-100">
-            <div className="book-image-container">
-              <img src="/book_tendencies.jpg" alt="Tendencies Book" className="book-cover-img" />
+
+        <div className="slideshow-container animate-fade-up">
+          <button className="slider-btn prev" onClick={prevSlide}>
+            <ChevronLeft size={32} />
+          </button>
+
+          <div className="slideshow-content">
+            <div className="book-cover-container">
+              <Document file={BOOKS[currentIndex].pdfFile}>
+                <Page 
+                  pageNumber={1} 
+                  width={300} 
+                  renderTextLayer={false} 
+                  renderAnnotationLayer={false} 
+                  className="pdf-page-render"
+                />
+              </Document>
             </div>
-            <div className="book-details">
-              <h3 className="book-title">TENDENCIES</h3>
-              <p className="book-desc">An exploration of human nature, faith, and the paths we choose.</p>
+            
+            <div className="book-info">
+              <h3>{BOOKS[currentIndex].title}</h3>
+              <p>{BOOKS[currentIndex].description}</p>
             </div>
           </div>
 
-          <div className="book-showcase-item animate-on-scroll delay-300">
-            <div className="book-details desktop-only text-right">
-              <h3 className="book-title">BEFORE YOU JAPA</h3>
-              <p className="book-desc">Essential wisdom and practical guidance for those considering migration.</p>
-            </div>
-            <div className="book-image-container">
-              <img src="/book_japa.jpg" alt="Before You Japa Book" className="book-cover-img" />
-            </div>
-            <div className="book-details mobile-only">
-              <h3 className="book-title">BEFORE YOU JAPA</h3>
-              <p className="book-desc">Essential wisdom and practical guidance for those considering migration.</p>
-            </div>
-          </div>
+          <button className="slider-btn next" onClick={nextSlide}>
+            <ChevronRight size={32} />
+          </button>
+        </div>
+        
+        <div className="slideshow-dots">
+          {BOOKS.map((_, idx) => (
+            <div 
+              key={idx} 
+              className={`dot ${idx === currentIndex ? 'active' : ''}`}
+              onClick={() => setCurrentIndex(idx)}
+            />
+          ))}
         </div>
       </div>
     </section>

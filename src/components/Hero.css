@@ -1,136 +1,92 @@
 .hero {
   min-height: 100vh;
-  position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  text-align: center;
-  padding: 2rem 1.5rem;
-}
-
-.hero-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url('/pastor.jpg');
+  position: relative;
+  background-image: url('/hero-bg.jpg');
   background-size: cover;
-  background-position: center 20%;
-  filter: grayscale(100%);
-  z-index: 1;
+  background-position: center top;
+  background-attachment: fixed; /* Parallax effect */
 }
 
-.hero-bg-overlay {
+.hero-overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  /* Dark elegant gradient */
-  background: radial-gradient(
-    circle at center,
-    rgba(26, 17, 13, 0.6) 0%,
-    rgba(26, 17, 13, 0.9) 80%,
-    rgba(10, 5, 3, 1) 100%
-  );
+  background: linear-gradient(to right, rgba(26, 17, 13, 0.9) 0%, rgba(26, 17, 13, 0.4) 100%);
+  z-index: 1;
 }
 
 .hero-content {
   position: relative;
   z-index: 2;
-  color: var(--card-bg);
   width: 100%;
+}
+
+.hero-text {
   max-width: 600px;
+  color: #fff;
 }
 
-.hero-subtitle {
-  font-family: var(--font-body);
-  font-size: 0.75rem;
-  font-weight: 400;
-  letter-spacing: 0.4em;
-  color: var(--border-color);
-  margin-bottom: 1.5rem;
-  text-transform: uppercase;
-  opacity: 0.9;
-}
-
-.hero-title {
-  margin-bottom: 2rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  line-height: 1;
-}
-
-.number-container {
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  position: relative;
-}
-
-.hero-title .number {
-  font-size: 8rem;
-  line-height: 0.8;
-  font-weight: 400;
-  text-shadow: 0 10px 30px rgba(0,0,0,0.8);
-  letter-spacing: -0.05em;
-  color: var(--accent-red);
-}
-
-.hero-title .suffix {
-  font-size: 1.5rem;
-  font-weight: 400;
-  color: var(--accent-gold);
-  margin-top: 0.5rem;
-  margin-left: 0.2rem;
+.date-badge {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background-color: var(--accent-gold);
+  color: var(--text-primary);
+  font-weight: 700;
+  font-size: 0.9rem;
   letter-spacing: 0.1em;
+  margin-bottom: 2rem;
+  border-radius: 2px;
 }
 
-.hero-title .birthday {
-  font-size: 2.2rem;
-  margin-top: 0.5rem;
-  letter-spacing: 0.3em;
-  font-weight: 300;
-  text-shadow: 0 10px 20px rgba(0,0,0,0.5);
+.hero-text h1 {
+  color: #fff;
+  font-size: 4.5rem;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+
+.highlight {
   color: var(--accent-gold);
+  font-size: 6rem;
 }
 
-.hero-description {
-  font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.7);
+.th-sup {
+  font-size: 2rem;
+  vertical-align: super;
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+}
+
+.hero-text .subtitle {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.25rem;
   margin-bottom: 3rem;
-  line-height: 1.8;
   font-weight: 300;
-  max-width: 90%;
-  margin-left: auto;
-  margin-right: auto;
 }
 
-.hero-description strong {
-  font-weight: 500;
-}
-
-/* Luxury Button */
-.btn-luxury {
-  position: relative;
-  display: inline-flex;
-  flex-direction: column;
+.hero-actions {
+  display: flex;
+  gap: 1.5rem;
   align-items: center;
-  justify-content: center;
-  padding: 1rem 2.5rem;
-  background: rgba(178, 34, 34, 0.1);
-  border: 1px solid rgba(197, 160, 89, 0.5);
+}
+
+.btn-luxury {
+  background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 4px;
-  color: var(--card-bg);
+  border: 1px solid rgba(212, 175, 55, 0.5); /* Gold border */
+  color: #fff;
+  padding: 1.25rem 2.5rem;
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  transition: all 0.4s ease;
+  position: relative;
   overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-  text-decoration: none;
-  width: 100%;
 }
 
 .btn-luxury::before {
@@ -140,61 +96,49 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.2),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
   transition: all 0.6s ease;
 }
 
 .btn-luxury:hover {
-  background: rgba(178, 34, 34, 0.2);
-  border-color: var(--accent-gold);
-  transform: translateY(-2px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(197, 160, 89, 0.2);
+  background: rgba(212, 175, 55, 0.2);
+  border-color: rgba(212, 175, 55, 1);
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
 }
 
 .btn-luxury:hover::before {
   left: 100%;
 }
 
-.btn-text {
-  font-family: var(--font-body);
-  font-size: 0.85rem;
+.btn-outline-light {
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #fff;
+  padding: 1.25rem 2.5rem;
+  text-decoration: none;
   font-weight: 500;
-  letter-spacing: 0.2em;
-  margin-bottom: 0.25rem;
+  transition: all 0.3s;
 }
 
-.btn-price {
-  font-family: var(--font-heading);
-  font-size: 1rem;
-  color: var(--accent-gold);
-  opacity: 0.9;
+.btn-outline-light:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: #fff;
 }
 
-/* Tablet & Desktop */
-@media (min-width: 768px) {
-  .hero-title .number {
-    font-size: 12rem;
+@media (max-width: 768px) {
+  .hero-overlay {
+    background: linear-gradient(to top, rgba(26, 17, 13, 0.95) 0%, rgba(26, 17, 13, 0.6) 100%);
   }
-  .hero-title .suffix {
-    font-size: 2rem;
-    margin-top: 1rem;
+  .hero-text h1 {
+    font-size: 3rem;
   }
-  .hero-title .birthday {
-    font-size: 3.5rem;
+  .highlight {
+    font-size: 4rem;
   }
-  .hero-subtitle {
-    font-size: 0.9rem;
+  .th-sup {
+    font-size: 1.5rem;
   }
-  .hero-description {
-    font-size: 1.1rem;
-  }
-  .btn-luxury {
-    width: auto;
-    padding: 1.25rem 3.5rem;
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
   }
 }

@@ -4,32 +4,26 @@ import './Hero.css';
 export default function Hero({ onOpenModal }) {
   return (
     <section className="hero">
-      <div className="hero-bg">
-        <div className="hero-bg-overlay"></div>
-      </div>
-      
+      <div className="hero-overlay"></div>
       <div className="container hero-content">
-        <div className="hero-text animate-fade-up">
-          <p className="hero-subtitle">CELEB RATING & BOOK LAUNCH</p>
-          
-          <h1 className="hero-title">
-            <div className="number-container">
-              <span className="number text-red">55</span>
-              <span className="suffix">TH</span>
-            </div>
-            <span className="birthday text-gold">BIRTHDAY</span>
+        <div className="hero-text">
+          <div className="date-badge animate-fade-up">OCTOBER 15TH, 2026</div>
+          <h1 className="animate-fade-up" style={{animationDelay: '0.1s'}}>
+            Celebrating <br/>
+            <span className="highlight">55<sup className="th-sup">TH</sup></span><br/>
+            Years of Grace
           </h1>
-          
-          <p className="hero-description">
-            A life of grace, service, and legacy. Join us in honour of 
-            <strong className="text-gold"> Rev. Barr. Cosfinney Udoka</strong> as we celebrate 55 years of God's faithfulness and the launch of his new books.
+          <p className="subtitle animate-fade-up" style={{animationDelay: '0.2s'}}>
+            Join us for the 55th Birthday Celebration & Double Book Launch of <br/>
+            <strong>Rev. Barr. Cosfinney Udoka N.</strong>
           </p>
-          
-          <div className="hero-actions">
+          <div className="hero-actions animate-fade-up" style={{animationDelay: '0.3s'}}>
             <button className="btn btn-luxury" onClick={onOpenModal}>
-              <span className="btn-text">RSVP & GET TICKET</span>
-              <span className="btn-price">(₦15,000)</span>
+              RSVP & GET TICKET
             </button>
+            <a href="#books" className="btn btn-outline-light">
+              Explore Books
+            </a>
           </div>
         </div>
       </div>
