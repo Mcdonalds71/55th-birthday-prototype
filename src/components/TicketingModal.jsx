@@ -72,7 +72,7 @@ export default function TicketingModal({ isOpen, onClose }) {
       makeData.append("phone", formData.phone);
       makeData.append("receipt", receiptFile);
 
-      const makePromise = fetch("https://hook.us1.make.com/pnnq3jumlbm9o3u8s1vqwpj6f4x9wcwt", {
+      const makePromise = fetch("https://hook.eu1.make.com/yrczjkiw6xshx1wb7s0qaqj99x3nunu6", {
         method: "POST",
         body: makeData
       }).catch(err => {
