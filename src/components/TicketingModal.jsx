@@ -75,9 +75,12 @@ export default function TicketingModal({ isOpen, onClose }) {
       const makePromise = fetch("https://hook.us1.make.com/pnnq3jumlbm9o3u8s1vqwpj6f4x9wcwt", {
         method: "POST",
         body: makeData
+      }).catch(err => {
+        console.log("Make webhook silent failure (likely Ad-Blocker):", err);
+        return { ok: false }; // Prevents Promise.all from crashing
       });
 
-      // Execute both
+      // Execute both safely
       const [formspreeRes, makeRes] = await Promise.all([formspreePromise, makePromise]);
 
       if (!formspreeRes.ok) {
