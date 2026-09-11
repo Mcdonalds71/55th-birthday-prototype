@@ -49,35 +49,39 @@ export default function TicketingModal({ isOpen, onClose }) {
     submitData.append("_replyto", formData.email);
 
     try {
-      // 1. Send to Formspree (for the client's dashboard)
-      const formspreePromise = fetch("https://formspree.io/f/mbgjbbwz", {
+      // 1. Send to Formspree (Primary goal)
+      const formspreeRes = await fetch("https://formspree.io/f/mbgjbbwz", {
         method: "POST",
         body: submitData,
         headers: { 'Accept': 'application/json' }
       });
 
-      // 2. Send to Make.com Webhook (for automation: QR code and email)
-      const makeData = new FormData();
-      makeData.append("name", formData.name);
-      makeData.append("email", formData.email);
-      makeData.append("phone", formData.phone);
-      // We don't necessarily need to send the file to Make, but we can send the data
-      
-      const makePromise = fetch("https://hook.us1.make.com/pnnq3jumlbm9o3u8s1vqwpj6f4x9wcwt", {
-        method: "POST",
-        body: makeData
-      });
-
-      // Wait for both to finish
-      const [formspreeRes, makeRes] = await Promise.all([formspreePromise, makePromise]);
-
-      if (formspreeRes.ok) {
-        setStep(4);
-      } else {
-        alert("There was an error submitting your RSVP. Please try again.");
+      if (!formspreeRes.ok) {
+        alert("Formspree error: There was an issue submitting your RSVP.");
+        setIsSubmitting(false);
+        return;
       }
+
+      // If Formspree succeeds, immediately show success screen to user
+      setStep(4);
+
+      // 2. Silently send to Make.com in the background for the automation
+      // We use URLSearchParams to prevent strict CORS preflight blocking by browsers/ad-blockers
+      const makeDataParams = new URLSearchParams();
+      makeDataParams.append("name", formData.name);
+      makeDataParams.append("email", formData.email);
+      makeDataParams.append("phone", formData.phone);
+
+      fetch("https://hook.us1.make.com/pnnq3jumlbm9o3u8s1vqwpj6f4x9wcwt", {
+        method: "POST",
+        body: makeDataParams,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      }).catch(err => console.log("Make webhook silent failure (likely Ad-Blocker): ", err));
+
     } catch (error) {
-      alert("Network error. Please check your connection.");
+      alert("Network error. Please disable your Ad-Blocker or check your internet connection.");
     } finally {
       setIsSubmitting(false);
     }
