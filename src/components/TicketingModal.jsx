@@ -5,6 +5,8 @@ import './TicketingModal.css';
 export default function TicketingModal({ isOpen, onClose }) {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({ name: '', email: '', phone: '' });
+  const [receiptFile, setReceiptFile] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [copiedField, setCopiedField] = useState(null);
 
   if (!isOpen) return null;
@@ -25,6 +27,49 @@ export default function TicketingModal({ isOpen, onClose }) {
     setTimeout(() => setCopiedField(null), 2000);
   };
 
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setReceiptFile(e.target.files[0]);
+    }
+  };
+
+  const handleSubmitToFormspree = async () => {
+    if (!receiptFile) {
+      alert("Please select a receipt file first.");
+      return;
+    }
+    
+    setIsSubmitting(true);
+    
+    const submitData = new FormData();
+    submitData.append("name", formData.name);
+    submitData.append("email", formData.email);
+    submitData.append("phone", formData.phone);
+    submitData.append("receipt", receiptFile);
+    // Add destination email just in case you want to route it via Make later or inform the user
+    submitData.append("_replyto", formData.email);
+
+    try {
+      const response = await fetch("https://formspree.io/f/mbgjbbwz", {
+        method: "POST",
+        body: submitData,
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        setStep(4);
+      } else {
+        alert("There was an error submitting your RSVP. Please try again.");
+      }
+    } catch (error) {
+      alert("Network error. Please check your connection.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="modal-overlay">
       <div className="modal-content animate-fade-up">
@@ -41,6 +86,7 @@ export default function TicketingModal({ isOpen, onClose }) {
                 <label>FULL NAME</label>
                 <input 
                   type="text" 
+                  name="name"
                   required 
                   placeholder="Enter your name"
                   value={formData.name}
@@ -51,6 +97,7 @@ export default function TicketingModal({ isOpen, onClose }) {
                 <label>EMAIL ADDRESS</label>
                 <input 
                   type="email" 
+                  name="email"
                   required 
                   placeholder="Enter your email"
                   value={formData.email}
@@ -61,6 +108,7 @@ export default function TicketingModal({ isOpen, onClose }) {
                 <label>PHONE NUMBER</label>
                 <input 
                   type="tel" 
+                  name="phone"
                   required 
                   placeholder="Enter your phone number"
                   value={formData.phone}
@@ -128,13 +176,17 @@ export default function TicketingModal({ isOpen, onClose }) {
               <div className="upload-icon-circle">
                 <Upload size={32} />
               </div>
-              <p className="upload-text">Click or drag file to upload</p>
+              <p className="upload-text">{receiptFile ? receiptFile.name : 'Click or drag file to upload'}</p>
               <span className="upload-hint">Supports JPG, PNG, PDF</span>
-              <input type="file" accept="image/*,.pdf" className="file-input" onChange={() => setStep(4)} />
+              <input type="file" name="receipt" accept="image/*,.pdf" className="file-input" onChange={handleFileChange} />
             </div>
             
-            <button onClick={() => setStep(4)} className="btn btn-outline w-100 mt-4">
-              SIMULATE UPLOAD (PROTOTYPE)
+            <button 
+              onClick={handleSubmitToFormspree} 
+              className="btn btn-primary w-100 mt-4"
+              disabled={isSubmitting || !receiptFile}
+            >
+              {isSubmitting ? 'SUBMITTING...' : 'UPLOAD & COMPLETE RSVP'}
             </button>
           </div>
         )}
