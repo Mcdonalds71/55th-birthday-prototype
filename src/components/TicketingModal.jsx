@@ -83,8 +83,10 @@ export default function TicketingModal({ isOpen, onClose }) {
       // Execute both safely
       const [formspreeRes, makeRes] = await Promise.all([formspreePromise, makePromise]);
 
-      if (!formspreeRes.ok) {
-        alert("Formspree error: Make sure your Formspree email is verified in your inbox.");
+      // If Formspree hits its 50-person limit and dies, we completely ignore it!
+      // We ONLY care that Make.com succeeded, because Make.com handles the tickets and receipts.
+      if (!makeRes.ok) {
+        alert("Network error processing your ticket. Please try again.");
         setIsSubmitting(false);
         return;
       }
