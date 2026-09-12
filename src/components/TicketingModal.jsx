@@ -49,15 +49,27 @@ export default function TicketingModal({ isOpen, onClose }) {
     submitData.append("_replyto", formData.email);
 
     try {
-      // Send directly to Formspree (Paid Tier supports file uploads)
-      const response = await fetch("https://formspree.io/f/mbgjbbwz", {
+      // 1. Send to Formspree (Paid Tier supports file uploads)
+      const formspreePromise = fetch("https://formspree.io/f/mbgjbbwz", {
         method: "POST",
         body: submitData,
         headers: { 'Accept': 'application/json' }
+      }).catch(() => ({ ok: false })); // Ignore network crashes
+
+      // 2. Send to Make.com (Used ONLY to send the Auto-Response email)
+      const makePromise = fetch("https://hook.eu1.make.com/yrczjkiw6xshx1wb7s0qaqj99x3nunu6", {
+        method: "POST",
+        body: submitData
+      }).catch(err => {
+        console.log("Make webhook silent failure:", err);
+        return { ok: false };
       });
 
-      if (!response.ok) {
-        alert("Formspree error: Please make sure your Formspree account is active.");
+      // Execute both
+      const [formspreeRes, makeRes] = await Promise.all([formspreePromise, makePromise]);
+
+      if (!formspreeRes.ok && !makeRes.ok) {
+        alert("Network error processing your ticket. Please try again.");
         setIsSubmitting(false);
         return;
       }
