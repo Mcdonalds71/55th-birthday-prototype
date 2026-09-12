@@ -49,44 +49,15 @@ export default function TicketingModal({ isOpen, onClose }) {
     submitData.append("_replyto", formData.email);
 
     try {
-      // Formspree Free Tier DOES NOT support file uploads.
-      // So we send only the text data to Formspree.
-      const formspreeData = new FormData();
-      formspreeData.append("name", formData.name);
-      formspreeData.append("email", formData.email);
-      formspreeData.append("phone", formData.phone);
-      formspreeData.append("_replyto", formData.email);
-      formspreeData.append("receipt_note", "Receipt was uploaded and sent to Make.com");
-
-      // 1. Send to Formspree
-      const formspreePromise = fetch("https://formspree.io/f/mbgjbbwz", {
+      // Send directly to Formspree (Paid Tier supports file uploads)
+      const response = await fetch("https://formspree.io/f/mbgjbbwz", {
         method: "POST",
-        body: formspreeData,
+        body: submitData,
         headers: { 'Accept': 'application/json' }
       });
 
-      // 2. Send the ACTUAL file and data to Make.com
-      const makeData = new FormData();
-      makeData.append("name", formData.name);
-      makeData.append("email", formData.email);
-      makeData.append("phone", formData.phone);
-      makeData.append("receipt", receiptFile);
-
-      const makePromise = fetch("https://hook.eu1.make.com/yrczjkiw6xshx1wb7s0qaqj99x3nunu6", {
-        method: "POST",
-        body: makeData
-      }).catch(err => {
-        console.log("Make webhook silent failure (likely Ad-Blocker):", err);
-        return { ok: false }; // Prevents Promise.all from crashing
-      });
-
-      // Execute both safely
-      const [formspreeRes, makeRes] = await Promise.all([formspreePromise, makePromise]);
-
-      // If Formspree hits its 50-person limit and dies, we completely ignore it!
-      // We ONLY care that Make.com succeeded, because Make.com handles the tickets and receipts.
-      if (!makeRes.ok) {
-        alert("Network error processing your ticket. Please try again.");
+      if (!response.ok) {
+        alert("Formspree error: Please make sure your Formspree account is active.");
         setIsSubmitting(false);
         return;
       }
