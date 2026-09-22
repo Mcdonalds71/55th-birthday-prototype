@@ -7,7 +7,7 @@ export default function Hero({ onOpenModal }) {
       <div className="hero-overlay"></div>
       <div className="container hero-content">
         <div className="hero-text">
-          <div className="date-badge animate-fade-up">OCTOBER 15TH, 2026</div>
+          <div className="date-badge animate-fade-up">OCTOBER 17TH, 2026</div>
           <h1 className="animate-fade-up" style={{animationDelay: '0.1s'}}>
             Celebrating <br/>
             <span className="highlight">55<sup className="th-sup">TH</sup></span><br/>
